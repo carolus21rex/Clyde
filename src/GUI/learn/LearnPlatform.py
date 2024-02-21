@@ -8,8 +8,7 @@
 import random
 import time
 import tkinter as tk
-import multiprocessing as mp
-import temperature as temp
+import src.GUI.learn.Temperature as temp
 
 
 # used for sliders, so they look right
@@ -40,7 +39,7 @@ def toggle_pause(pause_button, pause):
 
 
 # Creates the sliders on screen.
-# TODO eradicate the if case logic for better readability
+# TODO eradicate the if case logic for better flexibility
 # functional logic: returns a cookie cutter slider
 def create_slider(parent, label_text):
     frame = tk.Frame(parent, bg="black")
@@ -80,7 +79,6 @@ def addGizmos(root, data):
               'learning_rate': create_slider(root, "Learning Rate"),
               'temperature_label': tk.Label(root, text="Original Text", fg="white", bg="black")}
 
-
     # label
     gizmos['temperature_label'].pack()
 
@@ -110,7 +108,7 @@ def addGizmos(root, data):
 # functional logic: returns TK window
 def create_gui():
     root = tk.Tk()
-    root.title("Clyde's Talking Window")
+    root.title("Clyde's Learning Window")
     root.geometry("400x600")
     root.config(bg="black")  # Set background color to dark
 
@@ -120,10 +118,10 @@ def create_gui():
 # Updates temperature on the GUI
 # procedural logic
 def update_temp(label, tempr):
-    label.config(text=f"Temperature: {tempr.decode()} C")
+    label.config(text=f"Temperature: {tempr.decode()}")
 
 
-# reads all sliders on the GUI and stores the values in the data dictionary.
+# Reads all sliders on the GUI and stores the values in the data dictionary.
 # procedural logic
 def readGui(giz, data):
     data['duty_cycle'] = giz['duty_cycle'].get()
@@ -133,6 +131,8 @@ def readGui(giz, data):
     data['learning_rate'] = giz['learning_rate'].get()
 
 
+# Used in place of the standard main loop at ~ 10 FPS. Updates the window.
+# recursive procedural logic
 def custom_mainloop(giz, rot, data):
     write_to_text_boxes(giz['best_model_text'], data['best_text'], giz['prev_models_text'], data['prev_text'])
     update_temp(giz['temperature_label'], data['temperature_text'].value)
@@ -141,6 +141,8 @@ def custom_mainloop(giz, rot, data):
     rot.after(100, custom_mainloop, giz, rot, data)
 
 
+# Initializes the Learning GUI
+# procedural logic
 def make_window(data):
     rot = create_gui()
     giz = addGizmos(rot, data)
@@ -148,6 +150,8 @@ def make_window(data):
     rot.mainloop()
 
 
+# Defunct method used for debugging
+# procedural logic
 def update_text(data, stop_flag):
     while not stop_flag.is_set():
         data['prev_text'].value = (f"Random Previous Models: {str(random.randint(1, 100))}\n"
@@ -156,43 +160,3 @@ def update_text(data, stop_flag):
         data['best_text'].value = ("Random Best Model: " + str(random.randint(1, 100))).encode()
         data['temperature_text'].value = temp.getTemp().encode()
         time.sleep(0.09)
-
-
-def start_processes():
-    shared_data = {
-        # data going to the window
-        'prev_text': mp.Array('c', 255),  # string length 255
-        'best_text': mp.Array('c', 255),
-        'temperature_text': mp.Array('c', 50),
-        # data coming from the window
-        'pause': mp.Value('i', 1),
-        'duty_cycle': mp.Value('i', 50),
-        'temperature_threshold': mp.Value('i', 80),
-        'export_rate': mp.Value('i', 10),
-        'shuffle_quantity': mp.Value('i', 5),
-        'learning_rate': mp.Value('i', 100)
-    }
-
-    # Create a flag to signal the random_text function to stop
-    stop_flag = mp.Event()
-
-    # Create a process for running make_window
-    window_process = mp.Process(target=make_window, args=(shared_data,))
-    window_process.start()
-
-    # Run random_text in a separate process
-    random_text_process = mp.Process(target=update_text, args=(shared_data, stop_flag))
-    random_text_process.start()
-
-    # Wait for the window process to finish
-    window_process.join()
-
-    # Set the flag to signal the random_text function to stop
-    stop_flag.set()
-
-    # Wait for the random_text process to finish
-    random_text_process.join()
-
-
-if __name__ == "__main__":
-    start_processes()
