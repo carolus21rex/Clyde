@@ -1,11 +1,13 @@
 import src.GUI.learn.LearnPlatform as lp
 import src.GUI.learn.ManageIntelligence as mi
+import src.GUI.WindowUtil as wu
 import multiprocessing as mp
 
 
 # Learning GUI entry point
 # procedural logic
-def start_processes():
+def start_processes(root, intel, exportPath):
+    root.destroy()
     shared_data = {
         # data going to the GUI
         'prev_text': mp.Array('c', 255),  # string length 255
@@ -22,7 +24,7 @@ def start_processes():
 
     stop_flag = mp.Event()
 
-    window_process = mp.Process(target=lp.make_window, args=(shared_data,))
+    window_process = mp.Process(target=lp.init_window, args=(shared_data,))
     window_process.start()
 
     random_text_process = mp.Process(target=lp.update_text, args=(shared_data, stop_flag))
@@ -35,6 +37,4 @@ def start_processes():
     random_text_process.join()
 
 
-if __name__ == "__main__":
-    start_processes()
 
