@@ -7,7 +7,6 @@
 #
 import random
 import time
-import tkinter as tk
 import src.GUI.learn.Temperature as temp
 import src.GUI.WindowUtil as wu
 

@@ -19,7 +19,7 @@ def start_processes(root, intel, exportPath):
         'temperature_threshold': mp.Value('i', 80),
         'export_rate': mp.Value('i', 10),
         'shuffle_quantity': mp.Value('i', 5),
-        'learning_rate': mp.Value('i', 100)
+        'learning_rate': mp.Value('i', 0)
     }
 
     stop_flag = mp.Event()

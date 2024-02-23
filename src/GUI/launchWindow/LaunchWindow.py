@@ -1,5 +1,5 @@
 import tkinter as tk
-import src.GUI.learn.learningInit as li
+import src.GUI.learn.LearningInit as li
 import src.GUI.WindowUtil as wu
 
 

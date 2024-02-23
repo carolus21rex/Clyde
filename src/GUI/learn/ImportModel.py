@@ -33,7 +33,7 @@ def goto_learn_platform(root, importPath, exportPath, errorBox):
     try:
         exportPath = parse_path(exportPath)
     except FileNotFoundError:
-        wu.write_to_textbox(errorBox, "Import Path is not a valid path.")
+        wu.write_to_textbox(errorBox, "Export Path is not a valid path.")
         return
     print("successful import. Woo!")
     # TODO: import intelligence
@@ -42,7 +42,7 @@ def goto_learn_platform(root, importPath, exportPath, errorBox):
 
 
 def entry(root):
-    wu.resize(root, 300, 300)
+    wu.resize(root, 400, 300)
     importPath = wu.add_label(root, "Import Path")
     exportPath = wu.add_label(root, "Export Path")
     # TODO: stylize the text for overflow case

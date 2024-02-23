@@ -4,7 +4,7 @@ import tkinter as tk
 def create_gui():
     root = tk.Tk()
     root.title("Friepaw's AI GUI")
-    root.geometry("300x150")
+    root.geometry("400x150")
     root.config(bg="black")
     return root
 
